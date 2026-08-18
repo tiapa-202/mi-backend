@@ -1,7 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');  //  NUEVA LÍNEA: Importamos cors
 const app = express();
 const PORT = 3000;
+
+//  NUEVA LÍNEA: Usamos cors para permitir peticiones de cualquier origen
+app.use(cors());
 
 // Usar body-parser para entender datos JSON
 app.use(bodyParser.json());
@@ -14,7 +18,7 @@ app.get('/', (req, res) => {
 // Ruta POST: RECIBIR TAREAS DEL FRONTEND
 app.post('/tareas', (req, res) => {
     const tarea = req.body;
-    console.log('📥Tarea recibida:', tarea);
+    console.log(' Tarea recibida:', tarea);
 
     res.json({
         mensaje: 'Tarea recibida correctamente',
