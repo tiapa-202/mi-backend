@@ -1,25 +1,25 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');  //  NUEVA LÍNEA: Importamos cors
+const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
-//  NUEVA LÍNEA: Usamos cors para permitir peticiones de cualquier origen
-app.use(cors());
+// Configurar CORS para aceptar peticiones desde cualquier origen
+app.use(cors({
+    origin: '*', // Permitir peticiones desde cualquier dominio (solo para desarrollo)
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+}));
 
-// Usar body-parser para entender datos JSON
 app.use(bodyParser.json());
 
-// Ruta GET (para probar que el servidor funciona)
 app.get('/', (req, res) => {
     res.json({ mensaje: '¡Hola! Soy tu backend', fecha: new Date() });
 });
 
-// Ruta POST: RECIBIR TAREAS DEL FRONTEND
 app.post('/tareas', (req, res) => {
     const tarea = req.body;
-    console.log(' Tarea recibida:', tarea);
-
+    console.log('📥 Tarea recibida:', tarea);
     res.json({
         mensaje: 'Tarea recibida correctamente',
         tareaRecibida: tarea,
@@ -27,7 +27,6 @@ app.post('/tareas', (req, res) => {
     });
 });
 
-// Iniciar el servidor
 app.listen(PORT, () => {
-    console.log(` Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`✅Servidor corriendo en http://localhost:${PORT}`);
 });
