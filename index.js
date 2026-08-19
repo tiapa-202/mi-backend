@@ -9,7 +9,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // URL DE CONEXIÓN A MONGODB (¡REEMPLAZA CON LA TUYA!)
-const MONGODB_URI = 'mongodb+srv://tiapadiego16_db_user:Dhara196@cluster0.jonyf2r.mongodb.net/?appName=Cluster0';
+const MONGODB_URI = 'mongodb+srv://tiapadiego16_db_user:Dhara196@cluster0.jonyf2r.mongodb.net/gestor_tareas';
 const DB_NAME = 'gestor_tareas'; // Nombre de la base de datos
 const COLLECTION_NAME = 'tareas'; // Nombre de la colección
 
