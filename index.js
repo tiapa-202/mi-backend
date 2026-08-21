@@ -18,12 +18,17 @@ let db;
 
 async function connectDB() {
     try {
-        const client = new MongoClient(MONGODB_URI);
+        const client = new MongoClient(process.env.MONGODB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            tls: true,
+            tlsAllowInvalidCertificates: true
+        });
         await client.connect();
         db = client.db(DB_NAME);
-        console.log('Conectado a MongoDB Atlas');
+        console.log(' Conectado a MongoDB Atlas');
     } catch (error) {
-        console.error('Error conectando a MongoDB:', error);
+        console.error(' Error conectando a MongoDB:', error);
         process.exit(1);
     }
 }
