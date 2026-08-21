@@ -8,19 +8,19 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// La URI ahora viene de una variable de entorno, no del código
+// La URI viene de una variable de entorno
 const MONGODB_URI = process.env.MONGODB_URI;
-
 const DB_NAME = 'gestor_tareas';
 const COLLECTION_NAME = 'tareas';
 
 let db;
 
+// ============================================
+// FUNCIÓN PARA CONECTAR A MONGODB
+// ============================================
 async function connectDB() {
     try {
-        const client = new MongoClient(process.env.MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
+        const client = new MongoClient(MONGODB_URI, {
             tls: true,
             tlsAllowInvalidCertificates: true
         });
@@ -33,6 +33,10 @@ async function connectDB() {
     }
 }
 
+// ============================================
+// RUTAS
+// ============================================
+
 app.get('/', (req, res) => {
     res.json({ mensaje: '¡Hola! Soy tu backend', fecha: new Date() });
 });
@@ -40,7 +44,7 @@ app.get('/', (req, res) => {
 app.post('/tareas', async (req, res) => {
     try {
         const tarea = req.body;
-        console.log('Tarea recibida:', tarea);
+        console.log('📥 Tarea recibida:', tarea);
 
         const collection = db.collection(COLLECTION_NAME);
         const result = await collection.insertOne(tarea);
@@ -63,13 +67,16 @@ app.get('/tareas', async (req, res) => {
         const tareas = await collection.find({}).toArray();
         res.json(tareas);
     } catch (error) {
-        console.error('Error al obtener tareas:', error);
+        console.error(' Error al obtener tareas:', error);
         res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
 });
 
+// ============================================
+// INICIAR EL SERVIDOR DESPUÉS DE CONECTAR
+// ============================================
 connectDB().then(() => {
     app.listen(PORT, () => {
-        console.log(`Servidor corriendo en el puerto ${PORT}`);
+        console.log(` Servidor corriendo en el puerto ${PORT}`);
     });
 });
