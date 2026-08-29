@@ -1,12 +1,10 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const { Pool } = require('pg');
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // ============================================
-// CONFIGURACIÓN CORS - EXPLÍCITA Y ROBUSTA
+// CONFIGURACIÓN CORS: LA CLAVE ESTÁ AQUÍ
 // ============================================
 const corsOptions = {
     origin: function (origin, callback) {
@@ -18,7 +16,7 @@ const corsOptions = {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            console.log('🔴 Origen bloqueado por CORS:', origin);
+            console.log(' Origen bloqueado por CORS:', origin);
             callback(new Error('No permitido por CORS'));
         }
     },
@@ -28,12 +26,17 @@ const corsOptions = {
     optionsSuccessStatus: 200
 };
 
-// USAR CORS (sin app.options)
+// APLICAR CORS A TODAS LAS RUTAS (¡ANTES QUE NADA!)
 app.use(cors(corsOptions));
 
-// Middleware para parsear JSON
-app.use(bodyParser.json());
+// MANEJAR EXPLÍCITAMENTE LAS SOLICITUDES OPTIONS (PREFLIGHT)
+app.options('*', cors(corsOptions));
 
+// Middleware para parsear JSON (DESPUÉS de CORS)
+app.use(express.json());
+
+// El resto de tu código (conexión a BD y rutas) va aquí...
+// ... (Tu código de conexión a PostgreSQL y las rutas GET, POST, DELETE)
 // ============================================
 // CONEXIÓN A POSTGRESQL
 // ============================================
