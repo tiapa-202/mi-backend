@@ -30,9 +30,6 @@ const corsOptions = {
 // APLICAR CORS A TODAS LAS RUTAS (¡ANTES QUE NADA!)
 app.use(cors(corsOptions));
 
-// MANEJAR EXPLÍCITAMENTE LAS SOLICITUDES OPTIONS (PREFLIGHT)
-app.options('*', cors(corsOptions));
-
 // Middleware para parsear JSON (DESPUÉS de CORS)
 app.use(express.json());
 
