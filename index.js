@@ -45,6 +45,21 @@ const pool = new Pool({
     }
 });
 
+// 👇 AGREGA ESTO — evita que un error de conexión tumbe todo el servidor
+pool.on('error', (err) => {
+    console.error('Error inesperado en el pool de PostgreSQL:', err);
+    // NO uses process.exit() aquí — solo lo registramos y seguimos vivos
+});
+
+// También corrige el pool.connect() de prueba para que no mate el proceso:
+pool.connect((err, client) => {
+    if (err) {
+        console.error('Error conectando a PostgreSQL:', err);
+        return; // antes tenías process.exit(1) aquí — quítalo
+    }
+    console.log('Conectado a PostgreSQL');
+    client.release(); // libera la conexión de prueba
+});
 // Verificar conexión
 pool.connect((err) => {
     if (err) {
