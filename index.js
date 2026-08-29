@@ -18,7 +18,7 @@ const corsOptions = {
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            console.log(' Origen bloqueado por CORS:', origin);
+            console.log('🔴 Origen bloqueado por CORS:', origin);
             callback(new Error('No permitido por CORS'));
         }
     },
@@ -28,9 +28,8 @@ const corsOptions = {
     optionsSuccessStatus: 200
 };
 
-// USAR CORS UNA SOLA VEZ (con la configuración)
+// USAR CORS (sin app.options)
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // ¡Quita la 's' al final!
 
 // Middleware para parsear JSON
 app.use(bodyParser.json());
