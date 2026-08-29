@@ -5,11 +5,38 @@ const { Pool } = require('pg');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// ============================================
+// CONFIGURACIÓN CORS - EXPLÍCITA Y ROBUSTA
+// ============================================
+const corsOptions = {
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            'https://centro-de-pruebas.onrender.com',
+            'http://localhost:5500',
+            'http://localhost:3000'
+        ];
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.log(' Origen bloqueado por CORS:', origin);
+            callback(new Error('No permitido por CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+
+// USAR CORS UNA SOLA VEZ (con la configuración)
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // ¡Quita la 's' al final!
+
+// Middleware para parsear JSON
 app.use(bodyParser.json());
 
 // ============================================
-// CONEXIÓN A POSTGRESQL (usando variables de entorno)
+// CONEXIÓN A POSTGRESQL
 // ============================================
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -21,7 +48,7 @@ const pool = new Pool({
 // Verificar conexión
 pool.connect((err) => {
     if (err) {
-        console.error(' Error conectando a PostgreSQL:', err);
+        console.error('Error conectando a PostgreSQL:', err);
         process.exit(1);
     }
     console.log(' Conectado a PostgreSQL');
@@ -42,7 +69,7 @@ app.get('/tareas', async (req, res) => {
         const result = await pool.query('SELECT * FROM tareas ORDER BY id ASC');
         res.json(result.rows);
     } catch (error) {
-        console.error(' Error al obtener tareas:', error);
+        console.error('Error al obtener tareas:', error);
         res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
 });
@@ -51,7 +78,7 @@ app.get('/tareas', async (req, res) => {
 app.post('/tareas', async (req, res) => {
     try {
         const { titulo, categoria } = req.body;
-        console.log('📥 Tarea recibida:', titulo, categoria);
+        console.log(' Tarea recibida:', titulo, categoria);
 
         const query = 'INSERT INTO tareas (titulo, categoria) VALUES ($1, $2) RETURNING *';
         const values = [titulo, categoria];
@@ -78,7 +105,7 @@ app.delete('/tareas/:id', async (req, res) => {
         }
         res.json({ mensaje: 'Tarea eliminada', tareaEliminada: result.rows[0] });
     } catch (error) {
-        console.error(' Error al eliminar tarea:', error);
+        console.error('Error al eliminar tarea:', error);
         res.status(500).json({ mensaje: 'Error interno del servidor' });
     }
 });
@@ -87,5 +114,5 @@ app.delete('/tareas/:id', async (req, res) => {
 // INICIAR EL SERVIDOR
 // ============================================
 app.listen(PORT, () => {
-    console.log(` Servidor corriendo en el puerto ${PORT}`);
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
